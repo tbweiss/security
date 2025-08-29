@@ -35,7 +35,13 @@ This file provides example prompts and instructions to guide AI coding assistant
         - Build target directories
         - .vscode files
         - Do not exclude generated code
-    - For package name, use the organization internet domain name (reversed) followed by the current workspace name followed by the current project name. For example, for an organization internet domain name of tbw.com and a workspace called myWorkspace and a project called my-project, the package name would be com.tbw.myworkspace.myproject.
+    - Maven Artifact Coordinate Naming Conventions
+        - For groupId, use the organization internet domain name (reversed) followed by the current workspace name.
+        - For artifactId, use the specified project name retaining any hyphens if present.
+    - Java Package Naming Conventions
+        - For package name, use the organization internet domain name (reversed) followed by the current workspace name followed by the current project name. For example, for an organization internet domain name of tbw.com and a workspace called myWorkspace and a project called my-project, the package name would be com.tbw.myworkspace.myproject.
+    - Avro Namespace Naming Conventions
+        - Use the same naming conventions as for Java packages above.
 
 
 ## Usage
