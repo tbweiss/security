@@ -35,6 +35,7 @@
 							<artifactId>avro-maven-plugin</artifactId>
 							<version>${avro.version}</version>
 							<executions>
+								<?m2e execute onConfiguration,onIncremental?>
 								<execution>
 									<phase>generate-sources</phase>
 									<goals>

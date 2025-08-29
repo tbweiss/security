@@ -10,6 +10,8 @@ services:
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
       KAFKA_CONTROLLER_QUORUM_VOTERS: 1@controller-1:9093,2@controller-2:9093,3@controller-3:9093
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+    networks:
+      - kafka-network 
 
   controller-2:
     image: apache/kafka:latest
@@ -22,6 +24,8 @@ services:
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
       KAFKA_CONTROLLER_QUORUM_VOTERS: 1@controller-1:9093,2@controller-2:9093,3@controller-3:9093
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+    networks:
+      - kafka-network
 
   controller-3:
     image: apache/kafka:latest
@@ -34,6 +38,8 @@ services:
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
       KAFKA_CONTROLLER_QUORUM_VOTERS: 1@controller-1:9093,2@controller-2:9093,3@controller-3:9093
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+    networks:
+      - kafka-network
 
   broker-1:
     image: apache/kafka:latest
@@ -54,6 +60,8 @@ services:
       - controller-1
       - controller-2
       - controller-3
+    networks:
+      - kafka-network 
 
   broker-2:
     image: apache/kafka:latest
@@ -74,6 +82,8 @@ services:
       - controller-1
       - controller-2
       - controller-3
+    networks:
+      - kafka-network
 
   broker-3:
     image: apache/kafka:latest
@@ -94,3 +104,8 @@ services:
       - controller-1
       - controller-2
       - controller-3
+    networks:
+      - kafka-network
+networks:
+  kafka-network:
+    driver: bridge
