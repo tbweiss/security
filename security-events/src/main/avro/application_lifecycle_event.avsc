@@ -1,0 +1,102 @@
+{
+  "type": "record",
+  "name": "ApplicationLifecycleEvent",
+  "namespace": "com.tbw.security.securityevents",
+  "doc": "Schema for auditing application lifecycle events with comprehensive tracking",
+  "fields": [
+    {
+      "name": "header",
+      "type": {
+        "type": "record",
+        "name": "EventHeader",
+        "doc": "Standard header information for all lifecycle events",
+        "fields": [
+          {
+            "name": "event_id",
+            "type": "string",
+            "doc": "Unique identifier for this event (UUID recommended)"
+          },
+          {
+            "name": "event_version",
+            "type": "string",
+            "default": "1.0",
+            "doc": "Schema version for this event format"
+          },
+          {
+            "name": "timestamp",
+            "type": {
+              "type": "long",
+              "logicalType": "timestamp-millis"
+            },
+            "doc": "When the event occurred (milliseconds since epoch)"
+          },
+          {
+            "name": "correlation_id",
+            "type": ["null", "string"],
+            "default": null,
+            "doc": "ID to correlate related events across services"
+          },
+          {
+            "name": "trace_id",
+            "type": ["null", "string"], 
+            "default": null,
+            "doc": "Distributed tracing ID for request tracking"
+          },
+          {
+            "name": "application_name",
+            "type": "string",
+            "doc": "Name of the application generating the event"
+          },
+          {
+            "name": "application_version",
+            "type": "string",
+            "doc": "Version of the application (e.g., 1.2.3)"
+          },
+          {
+            "name": "environment",
+            "type": {
+              "type": "enum",
+              "name": "Environment",
+              "symbols": ["DEVELOPMENT", "TESTING", "STAGING", "PRODUCTION"],
+              "default": "DEVELOPMENT"
+            },
+            "doc": "Environment where the event occurred"
+          },
+          {
+            "name": "source_host",
+            "type": "string",
+            "doc": "Hostname or IP of the machine generating the event"
+          },
+          {
+            "name": "source_instance_id",
+            "type": ["null", "string"],
+            "default": null,
+            "doc": "Instance/container ID if running in containerized environment"
+          },
+          {
+            "name": "user_id",
+            "type": ["null", "string"],
+            "default": null,
+            "doc": "ID of user who triggered the event, if applicable"
+          },
+          {
+            "name": "session_id",
+            "type": ["null", "string"],
+            "default": null,
+            "doc": "Session ID associated with the event, if applicable"
+          },
+          {
+            "name": "severity",
+            "type": {
+              "type": "enum",
+              "name": "Severity",
+              "symbols": ["DEBUG", "INFO", "WARN", "ERROR", "CRITICAL"],
+              "default": "INFO"
+            },
+            "doc": "Severity level of the lifecycle event"
+          }
+        ]
+      }
+    }
+  ]
+}
