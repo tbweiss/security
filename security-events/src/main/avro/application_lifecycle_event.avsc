@@ -97,6 +97,386 @@
           }
         ]
       }
+    },
+    {
+      "name": "body",
+      "type": [
+        {
+          "type": "record",
+          "name": "ApplicationStartup",
+          "doc": "Event fired when application starts up",
+          "fields": [
+            {
+              "name": "startup_time_ms",
+              "type": "long",
+              "doc": "Time taken to start up in milliseconds"
+            },
+            {
+              "name": "jvm_version",
+              "type": ["null", "string"],
+              "default": null,
+              "doc": "JVM version if applicable"
+            },
+            {
+              "name": "memory_allocated_mb",
+              "type": ["null", "long"],
+              "default": null,
+              "doc": "Initial memory allocation in MB"
+            },
+            {
+              "name": "configuration_profile",
+              "type": ["null", "string"],
+              "default": null,
+              "doc": "Active configuration profile (e.g., 'prod', 'dev')"
+            },
+            {
+              "name": "enabled_features",
+              "type": {
+                "type": "array",
+                "items": "string"
+              },
+              "default": [],
+              "doc": "List of enabled feature flags or modules"
+            }
+          ]
+        },
+        {
+          "type": "record",
+          "name": "ApplicationShutdown",
+          "doc": "Event fired when application shuts down",
+          "fields": [
+            {
+              "name": "shutdown_reason",
+              "type": {
+                "type": "enum",
+                "name": "ShutdownReason",
+                "symbols": ["GRACEFUL", "FORCED", "ERROR", "SIGNAL", "OUT_OF_MEMORY", "EXTERNAL_REQUEST"],
+                "default": "GRACEFUL"
+              },
+              "doc": "Reason for application shutdown"
+            },
+            {
+              "name": "uptime_seconds",
+              "type": "long",
+              "doc": "Total application uptime in seconds"
+            },
+            {
+              "name": "final_memory_usage_mb",
+              "type": ["null", "long"],
+              "default": null,
+              "doc": "Memory usage at shutdown in MB"
+            },
+            {
+              "name": "cleanup_time_ms",
+              "type": ["null", "long"],
+              "default": null,
+              "doc": "Time spent on cleanup operations in milliseconds"
+            },
+            {
+              "name": "exit_code",
+              "type": "int",
+              "default": 0,
+              "doc": "Application exit code"
+            }
+          ]
+        },
+        {
+          "type": "record",
+          "name": "ConfigurationChange",
+          "doc": "Event fired when configuration changes",
+          "fields": [
+            {
+              "name": "config_key",
+              "type": "string",
+              "doc": "Configuration key that changed"
+            },
+            {
+              "name": "old_value",
+              "type": ["null", "string"],
+              "default": null,
+              "doc": "Previous configuration value (null if newly added)"
+            },
+            {
+              "name": "new_value",
+              "type": ["null", "string"],
+              "default": null,
+              "doc": "New configuration value (null if deleted)"
+            },
+            {
+              "name": "change_source",
+              "type": {
+                "type": "enum",
+                "name": "ConfigSource",
+                "symbols": ["FILE", "ENVIRONMENT", "DATABASE", "REMOTE_CONFIG", "ADMIN_INTERFACE", "API"],
+                "default": "FILE"
+              },
+              "doc": "Source of the configuration change"
+            },
+            {
+              "name": "requires_restart",
+              "type": "boolean",
+              "default": false,
+              "doc": "Whether this change requires application restart"
+            }
+          ]
+        },
+        {
+          "type": "record",
+          "name": "ServiceStatusChange",
+          "doc": "Event fired when a service or component changes status",
+          "fields": [
+            {
+              "name": "service_name",
+              "type": "string",
+              "doc": "Name of the service or component"
+            },
+            {
+              "name": "previous_status",
+              "type": ["null", {
+                "type": "enum",
+                "name": "ServiceStatus",
+                "symbols": ["STARTING", "HEALTHY", "DEGRADED", "UNHEALTHY", "STOPPED", "UNKNOWN"]
+              }],
+              "default": null,
+              "doc": "Previous service status"
+            },
+            {
+              "name": "current_status",
+              "type": "ServiceStatus",
+              "doc": "Current service status"
+            },
+            {
+              "name": "status_details",
+              "type": ["null", "string"],
+              "default": null,
+              "doc": "Additional details about the status change"
+            },
+            {
+              "name": "health_check_url",
+              "type": ["null", "string"],
+              "default": null,
+              "doc": "URL used for health checking this service"
+            }
+          ]
+        },
+        {
+          "type": "record",
+          "name": "DatabaseOperation",
+          "doc": "Event fired for significant database operations",
+          "fields": [
+            {
+              "name": "operation_type",
+              "type": {
+                "type": "enum",
+                "name": "DatabaseOperationType",
+                "symbols": ["MIGRATION", "BACKUP", "RESTORE", "INDEX_REBUILD", "MAINTENANCE", "CONNECTION_POOL_EVENT"],
+                "default": "MIGRATION"
+              },
+              "doc": "Type of database operation"
+            },
+            {
+              "name": "database_name",
+              "type": "string",
+              "doc": "Name of the database"
+            },
+            {
+              "name": "operation_status",
+              "type": {
+                "type": "enum",
+                "name": "OperationStatus",
+                "symbols": ["STARTED", "IN_PROGRESS", "COMPLETED", "FAILED", "CANCELLED"],
+                "default": "STARTED"
+              },
+              "doc": "Status of the operation"
+            },
+            {
+              "name": "duration_ms",
+              "type": ["null", "long"],
+              "default": null,
+              "doc": "Operation duration in milliseconds (null if still running)"
+            },
+            {
+              "name": "affected_tables",
+              "type": {
+                "type": "array",
+                "items": "string"
+              },
+              "default": [],
+              "doc": "List of tables affected by the operation"
+            },
+            {
+              "name": "error_message",
+              "type": ["null", "string"],
+              "default": null,
+              "doc": "Error message if operation failed"
+            }
+          ]
+        },
+        {
+          "type": "record",
+          "name": "SecurityEvent",
+          "doc": "Event fired for security-related lifecycle events",
+          "fields": [
+            {
+              "name": "event_type",
+              "type": {
+                "type": "enum",
+                "name": "SecurityEventType",
+                "symbols": [
+                  "AUTHENTICATION_FAILURE",
+                  "AUTHORIZATION_FAILURE", 
+                  "CERTIFICATE_EXPIRY_WARNING",
+                  "CERTIFICATE_RENEWED",
+                  "API_KEY_ROTATED",
+                  "SUSPICIOUS_ACTIVITY",
+                  "SECURITY_SCAN_COMPLETED"
+                ]
+              },
+              "doc": "Type of security event"
+            },
+            {
+              "name": "resource",
+              "type": ["null", "string"],
+              "default": null,
+              "doc": "Resource or endpoint involved in the security event"
+            },
+            {
+              "name": "threat_level",
+              "type": {
+                "type": "enum",
+                "name": "ThreatLevel",
+                "symbols": ["LOW", "MEDIUM", "HIGH", "CRITICAL"],
+                "default": "LOW"
+              },
+              "doc": "Assessed threat level of the event"
+            },
+            {
+              "name": "client_ip",
+              "type": ["null", "string"],
+              "default": null,
+              "doc": "IP address of the client involved"
+            },
+            {
+              "name": "user_agent",
+              "type": ["null", "string"],
+              "default": null,
+              "doc": "User agent string if applicable"
+            }
+          ]
+        },
+        {
+          "type": "record",
+          "name": "PerformanceAlert",
+          "doc": "Event fired when performance thresholds are breached",
+          "fields": [
+            {
+              "name": "metric_name",
+              "type": "string",
+              "doc": "Name of the performance metric"
+            },
+            {
+              "name": "current_value",
+              "type": "double",
+              "doc": "Current value of the metric"
+            },
+            {
+              "name": "threshold_value",
+              "type": "double",
+              "doc": "Threshold that was breached"
+            },
+            {
+              "name": "alert_type",
+              "type": {
+                "type": "enum",
+                "name": "AlertType",
+                "symbols": ["THRESHOLD_EXCEEDED", "THRESHOLD_RECOVERED", "ANOMALY_DETECTED"],
+                "default": "THRESHOLD_EXCEEDED"
+              },
+              "doc": "Type of performance alert"
+            },
+            {
+              "name": "measurement_unit",
+              "type": "string",
+              "default": "count",
+              "doc": "Unit of measurement (e.g., 'ms', 'MB', 'requests/sec')"
+            },
+            {
+              "name": "duration_seconds",
+              "type": ["null", "long"],
+              "default": null,
+              "doc": "How long the condition has persisted"
+            }
+          ]
+        },
+        {
+          "type": "record",
+          "name": "DeploymentEvent",
+          "doc": "Event fired during deployment lifecycle",
+          "fields": [
+            {
+              "name": "deployment_id",
+              "type": "string",
+              "doc": "Unique identifier for this deployment"
+            },
+            {
+              "name": "deployment_stage",
+              "type": {
+                "type": "enum",
+                "name": "DeploymentStage",
+                "symbols": ["STARTED", "VALIDATING", "DEPLOYING", "HEALTH_CHECKING", "COMPLETED", "ROLLED_BACK", "FAILED"],
+                "default": "STARTED"
+              },
+              "doc": "Current stage of deployment"
+            },
+            {
+              "name": "from_version",
+              "type": ["null", "string"],
+              "default": null,
+              "doc": "Version being replaced (null for initial deployment)"
+            },
+            {
+              "name": "to_version",
+              "type": "string",
+              "doc": "Version being deployed"
+            },
+            {
+              "name": "deployment_strategy",
+              "type": {
+                "type": "enum",
+                "name": "DeploymentStrategy",
+                "symbols": ["BLUE_GREEN", "ROLLING", "CANARY", "RECREATE"],
+                "default": "ROLLING"
+              },
+              "doc": "Deployment strategy used"
+            },
+            {
+              "name": "rollback_reason",
+              "type": ["null", "string"],
+              "default": null,
+              "doc": "Reason for rollback if applicable"
+            }
+          ]
+        }
+      ],
+      "doc": "Event body containing specific details based on event type"
+    },
+    {
+      "name": "tags",
+      "type": {
+        "type": "map",
+        "values": "string"
+      },
+      "default": {},
+      "doc": "Additional key-value tags for flexible categorization and filtering"
+    },
+    {
+      "name": "metrics",
+      "type": {
+        "type": "map",
+        "values": "double"
+      },
+      "default": {},
+      "doc": "Numeric metrics associated with the event for analysis"
     }
   ]
 }
