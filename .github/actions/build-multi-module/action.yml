@@ -1,14 +1,36 @@
 name: 'Multi-Module Maven Build'
 description: 'Builds all Maven modules in sequence'
+inputs:
+  run-tests:
+    description: 'Set to true to run all Maven tests'
+    required: false
+    default: 'false'
+  run-install:
+    description: 'Set to true to run mvn install, false to only run mvn clean'
+    required: false
+    default: 'true'
 runs:
   using: 'composite'
   steps:
+    - name: Aggregate Maven arguments
+      id: aggregate-args
+      run: |
+        MAVEN_ARGS="clean"
+        if [ "${{ inputs.run-install }}" == "true" ]; then
+          MAVEN_ARGS="$MAVEN_ARGS install"
+        fi
+        if [ "${{ inputs.run-tests }}" == "true" ]; then
+          MAVEN_ARGS="$MAVEN_ARGS test"
+        fi
+        echo "MAVEN_ARGS=$MAVEN_ARGS" >> $GITHUB_ENV
+      shell: bash
+
     - name: Build security-events
-      run: mvn -B -f security-events/pom.xml clean install
+      run: mvn -B -f security-events/pom.xml $MAVEN_ARGS
       shell: bash
     - name: Build event-spring-boot-starter
-      run: mvn -B -f event-spring-boot-starter/pom.xml clean install
+      run: mvn -B -f event-spring-boot-starter/pom.xml $MAVEN_ARGS
       shell: bash
     - name: Build spring-boot-application
-      run: mvn -B -f spring-boot-application/pom.xml clean install
+      run: mvn -B -f spring-boot-application/pom.xml $MAVEN_ARGS
       shell: bash
