@@ -1,0 +1,14 @@
+name: 'Multi-Module Maven Build'
+description: 'Builds all Maven modules in sequence'
+runs:
+  using: 'composite'
+  steps:
+    - name: Build security-events
+      run: mvn -B -f security-events/pom.xml clean install
+      shell: bash
+    - name: Build event-spring-boot-starter
+      run: mvn -B -f event-spring-boot-starter/pom.xml clean install
+      shell: bash
+    - name: Build spring-boot-application
+      run: mvn -B -f spring-boot-application/pom.xml clean install
+      shell: bash
