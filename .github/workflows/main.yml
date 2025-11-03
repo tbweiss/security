@@ -19,7 +19,7 @@ jobs:
           java-version: '21'
           cache: 'maven'
       - name: Build all modules
-        uses: ./.github/actions/build-multi-module/action.yml
+        uses: ./.github/actions/build-multi-module
 
   codeql:
     name: "CodeQL Analysis"
@@ -46,6 +46,6 @@ jobs:
           java-version: '21'
           cache: 'maven'
       - name: Build all modules
-        uses: ./.github/actions/build-multi-module/action.yml
+        uses: ./.github/actions/build-multi-module
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
