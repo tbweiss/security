@@ -19,7 +19,7 @@ jobs:
           distribution: 'temurin'
           
       - name: Dependency Check
-        uses: dependency-check/dependency-check-action@main
+        uses: owasp/dependency-check-action@v6.6.2
         with:
           project: 'Security Events'
           format: 'HTML'
